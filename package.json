@@ -1,0 +1,11 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "description": "My default boilerplate for new web projects.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marque Reavley <mrqrvly@gmail.com>",
+  "license": "MIT"
+}
