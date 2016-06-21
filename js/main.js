@@ -1,8 +1,8 @@
 
 
 
-//  PROTOTYPE NEW PLAYER CHARACTER AND CLASS CHOICES  //
-////////////////////////////////////////////////////////
+//  PROTOTYPE NEW PLAYER CHARACTER  //
+//////////////////////////////////////
 
 var playerName;
 
@@ -11,7 +11,6 @@ function playerCharacter (name, hp, xp, level, attack, defense, weapons, itemsBe
   this.hp                     = hp;
   this.attack                 = attack;
   this.defense                = defense;
-  // this.xp                     = xp;
   this.level                  = level;
   this.weapons                = weapons;
   this.itemsBelt              = itemsBelt;
@@ -19,17 +18,23 @@ function playerCharacter (name, hp, xp, level, attack, defense, weapons, itemsBe
 };
 
 
-//  CHARACTER STARTING CLASSES  //
-//////////////////////////////////
-
-var farmer    = new playerCharacter (playerName, 18, 0, 1, 6, 6, ['pitchfork'], [sporePod], 'none');
-var smith     = new playerCharacter (playerName, 20, 0, 1, 8, 4, ['smithing hammer'], [spike], 'none');
-var builder   = new playerCharacter (playerName, 19, 0, 1, 7, 6, ['wood axe'], [powderShell], 'none');
-var fieldhand = new playerCharacter (playerName, 17, 0, 1, 5, 5, ['hand scythe'], [balmVial], 'none');
 
 
-//  WEAPONS & QUEST ITEMS  //
-/////////////////////////////
+
+//  CHARACTER STARTING CLASSES DEFINED  //
+//////////////////////////////////////////
+
+var farmer    = new playerCharacter (playerName, 18, 0, 1, 6, 6, [pitchfork], [sporePod], 'none');
+var smith     = new playerCharacter (playerName, 20, 0, 1, 8, 4, [smithingHammer], [spike], 'none');
+var builder   = new playerCharacter (playerName, 19, 0, 1, 7, 6, [woodAxe], [powderShell], 'none');
+var fieldhand = new playerCharacter (playerName, 17, 0, 1, 5, 5, [handScythe], [balmVial], 'none');
+
+
+
+
+
+//  WEAPONS & QUEST ITEMS DEFINITIONS  //
+/////////////////////////////////////////
 
 var balmVial: {
   name:         'balm vial',
@@ -80,6 +85,9 @@ var smithingHammer: {
 }
 
 
+
+
+
 //  FUNCTION TO CALCULATE ITEM & WEAPON EFFECTS  //
 ///////////////////////////////////////////////////
 
@@ -87,8 +95,10 @@ var smithingHammer: {
 
 
 
-//  MERCHANT NPC CHARACTER  //
-//////////////////////////////
+
+
+//  MERCHANT NPC CHARACTER OBJECT  //
+/////////////////////////////////////
 
 var merchant = {
   name: 'Merchant',
@@ -111,6 +121,9 @@ function enemyCreature (name, hp, attack, defense, itemsDrop, enemyConditionsEff
   this.enemyConditionsEffect  = enemyConditionsEffect;
   this.enemyConditionsCause   = enemyConditionsCause;
 };
+
+
+
 
 
 //  CREATURE TYPES  //
