@@ -1,3 +1,8 @@
+
+
+
+
+
 <!DOCTYPE html>
 <html>
 
@@ -14,12 +19,38 @@
 
   <header class="container">      <!-- Header, contains title of the game -->
     <div class="row">
+
+
+
       <div class="col-8">
-        <h1>no text</h1>
+        <!-- Trigger/Open The Modal -->
+        <button id="myBtn">Select your character</button>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="begin">Begin</span>
+            <label for="name">Name your character:</label>
+            <input type="type" id="character-name" name="name">
+
+            <label for="class">Choose your starting class:</label>
+            <input type="radio" id="farmer" name="class" value="false" checked="checked"><label for="farmer">Farmer</label>
+            <input type="radio" id="smith" name="class" value="false"><label for="smith">Smith</label>
+            <input type="radio" id="builder" name="class" value="false"><label for="builder">Builder</label>
+            <input type="radio" id="fieldhand" name="class" value="false"><label for="fieldhand">Fieldhand</label>
+          </div>
+
+        </div>
       </div>
 
+
+
       <div class="col-4">
-        <h1>Cyfnos Village</h1>
+        <div>
+          <h1>Cyfnos Village</h1>
+        </div>
       </div>
     </div>
   </header>
