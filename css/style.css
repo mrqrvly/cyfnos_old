@@ -582,29 +582,33 @@ ul li {
 .col-1:last-child {
   margin-right: 0;
 }
-.col-4 div {
-  float: right;
-}
 div {
   margin: auto;
+}
+img {
+  max-width: 100%;
+}
+button {
+  float: right;
+}
+.col-6:nth-child(2) p {
+  float: right;
+}
+.col-4 {
+  width: 350px;
+  height: 350px;
+  overflow: hidden;
+  border: 2px solid grey;
+  border-radius: 5px;
 }
 * {
   box-sizing: border-box;
 }
-section div div div {
-  border: 1px dotted lightblue;
+header {
+  border-bottom: 1px solid grey;
 }
-header h1 {
-  border: 1px dotted lightblue;
-}
-.container {
-  border: 1px solid white;
-}
-.col-2 p {
-  border: 1px dotted lightblue;
-}
-.col-3 p {
-  border: 1px dotted lightblue;
+footer {
+  border-top: 1px solid grey;
 }
 /* The Modal (background) */
 .modal {
@@ -649,4 +653,15 @@ header h1 {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+#myBtn {
+  height: 40px;
+  width: 300px;
+  margin-top: 20px;
+  border-radius: 10px;
+  float: right;
+}
+#myBtn span {
+  width: 200px;
+  height: 80px;
 }

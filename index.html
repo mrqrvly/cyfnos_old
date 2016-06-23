@@ -17,12 +17,15 @@
 
 
 
-  <header class="container">      <!-- Header, contains title of the game -->
+  <header class="container">      <!-- Header - Game title and character select modal w/ form -->
     <div class="row">
-
-
-
-      <div class="col-8">
+      <div class="col-6">
+        <div>
+          <h1>Cyfnos Village</h1>
+        </div>
+      </div>
+      
+      <div class="col-6">
         <!-- Trigger/Open The Modal -->
         <button id="myBtn">Select your character</button>
 
@@ -44,37 +47,22 @@
 
         </div>
       </div>
-
-
-
-      <div class="col-4">
-        <div>
-          <h1>Cyfnos Village</h1>
-        </div>
-      </div>
     </div>
   </header>
 
 
 
-  <section class="container">     <!-- Section for HP and Condition bars -->
+  <section class="container">     <!-- Section for HP bars -->
     <div class="row">
       <div class="col-6">
         <div>
-          <p>Condition bar may or may not pop up here.</p>
-        </div>
-        <div>
-          <p>HP bar will show here.</p>
+          <p id="player-hp"></p>
         </div>
       </div>
 
       <div class="col-6">
         <div>
-          <p>Empty spot (for now).</p>
-        </div>
-
-        <div>
-          <p>Possible enemy HP bar here.</p>
+          <p id="enemy-hp"></p>
         </div>
       </div>
     </div>
@@ -82,23 +70,25 @@
 
 
 
-  <section class="container">
+  <section class="container">     <!--Section for player and creature graphics-->
     <div class="row">
-      <div class="col-2">
-        <p>Weapon box here.</p>
+      
+      <div class="col-4">
+        <div id="player-graphic"> 
+          <p>Player character box here.</p>
+        </div>
       </div>
 
-      <div class="col-3">
-        <p>Player character box here.</p>
+      <div class="col-4">
+        <p id="prompt-box">Prompt and instructional text will appear here.</p>
       </div>
 
-      <div class="col-2">
-        <p>Current area box here.</p>
+      <div class="col-4">
+        <div id="enemy-graphic">  
+          <p>Current enemy character box here.</p>
+        </div>
       </div>
 
-      <div class="col-3">
-        <p>Current enemy character box here.</p>
-      </div>
     </div>
   </section>
 
@@ -106,24 +96,23 @@
 
   <section class="container">
     <div class="row">
+      
       <div class="col-2">
+        <div id="weapon-graphic">
+        
+        </div>
+      </div>
+
+      <div id="item-box" class="col-2">
         <p>Item box here.</p>
       </div>
 
-      <div class="col-2">
-        <p>Item box here.</p>
+      <div class="col-6">
+      
       </div>
 
       <div class="col-2">
-        <p>Item box here.</p>
-      </div>
-
-      <div class="col-3">
-        <p>XP bar may display here.</p>
-      </div>
-
-      <div class="col-3">
-        <p>GO! or Proceed button here.</p>
+        <button id="goBtn">GO</button>
       </div>
 
     </div>
