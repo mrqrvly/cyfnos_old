@@ -591,15 +591,30 @@ img {
 button {
   float: right;
 }
-.col-6:nth-child(2) p {
+section:nth-child(2) .col-4:nth-child(3) p {
   float: right;
 }
-.col-4 {
+section:nth-child(3) .col-4 {
   width: 350px;
   height: 350px;
   overflow: hidden;
   border: 2px solid grey;
   border-radius: 5px;
+}
+button {
+  width: 158px;
+  height: 158px;
+}
+.col-2 {
+  width: 158px;
+  height: 158px;
+  border: 2px solid grey;
+  border-radius: 5px;
+  overflow: hidden;
+}
+p {
+  margin: 0;
+  padding: 0;
 }
 * {
   box-sizing: border-box;

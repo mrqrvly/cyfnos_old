@@ -54,15 +54,21 @@
 
   <section class="container">     <!-- Section for HP bars -->
     <div class="row">
-      <div class="col-6">
+      <div class="col-4">
         <div>
-          <p id="player-hp"></p>
+          <p id="player-hp">Player hit points:</p>
         </div>
       </div>
 
-      <div class="col-6">
+      <div class="col-4">
         <div>
-          <p id="enemy-hp"></p>
+          <p>Phase Tracker</p>
+        </div>
+      </div>
+
+      <div class="col-4">
+        <div>
+          <p id="enemy-hp">Enemy hit points:</p>
         </div>
       </div>
     </div>
@@ -75,17 +81,17 @@
       
       <div class="col-4">
         <div id="player-graphic"> 
-          <p>Player character box here.</p>
+          <p>Player</p>
         </div>
       </div>
 
-      <div class="col-4">
-        <p id="prompt-box">Prompt and instructional text will appear here.</p>
+      <div id="prompt-box" class="col-4">
+        
       </div>
 
       <div class="col-4">
         <div id="enemy-graphic">  
-          <p>Current enemy character box here.</p>
+          <p>Enemy</p>
         </div>
       </div>
 
@@ -99,16 +105,26 @@
       
       <div class="col-2">
         <div id="weapon-graphic">
-        
+          <p>Weapon</p>
         </div>
       </div>
 
-      <div id="item-box" class="col-2">
-        <p>Item box here.</p>
+      <div class="col-2 item-box">
+        <p>Empty</p>
       </div>
 
-      <div class="col-6">
-      
+      <div class="col-2 item-box">
+        <p>Empty</p>
+      </div>
+
+      <div class="col-2 item-box">
+        <p>Empty</p>
+      </div>
+
+      <div class="col-2">
+        <div id="status-indicator">
+          <p>Status ailments:</p>
+        </div>
       </div>
 
       <div class="col-2">
@@ -120,14 +136,14 @@
 
 
 
-  <footer class="container">
+  <!-- <footer class="container">
     <div class="row">
       <div class="col-12">
         <p>Copyright information here.</p>
       </div>
     </div>
   </footer>
-
+ -->
 
   <script src="js/main.js"></script>
 </body>

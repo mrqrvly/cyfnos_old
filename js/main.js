@@ -9,9 +9,16 @@ var modal         = document.getElementById('myModal'),
     playerGraphic = document.getElementById('player-graphic'),
     weaponGraphic = document.getElementById('weapon-graphic'),
     playerHp      = document.getElementById('player-hp'),
+    promptBox     = document.getElementById('prompt-box'),
     playerName,
     phaseCounter,
     player;
+
+function newMessage(message) {
+  var alertPlayer = document.createElement('p');
+  alertPlayer.innerText = message;
+  promptBox.insertBefore(alertPlayer, promptBox.firstChild);
+};
 
 //////////////////////////////////////
 //  DISPLAYS MODAL ON BUTTON CLICK  //
@@ -66,6 +73,8 @@ span.onclick = function() {
       weaponGraphic.innerHTML = '<img src="images/pitchfork.jpg">';
     }
 
+    itemsCheck();
+
 ////////////////////////////////////
 //  GENERATE FIRST ENEMY TO BE    //
 //  FACED IN THE MAIN GAME PHASE  //
@@ -77,6 +86,8 @@ span.onclick = function() {
 //  PREPARE GAME ENVIRONMENT FOR   //
 //  REPEATING OF MAIN GAME PHASES  //
 /////////////////////////////////////
+
+    newMessage('The adventure through Cyfnos Village begins...');
 
     phaseCounter = 1
 
@@ -114,72 +125,81 @@ function PlayerCharacter (name, type, hp, xp, level, attack, defense, weapon, it
 
 var balmVial = {
   name:         'balm vial',
-  price:        9,
-  playerEffect: 'heal',
-  image:        'images/balm-vial'
+  image:        'images/balm-vial.png'
 };
 var powderShell = {
   name:         'powder shell',
-  price:        15,
-  enemyEffect:  'burn',
-  image:        'images/powdershell'
+  image:        'images/powdershell.jpg'
 };
 var spike = {
   name:         'spike',
-  price:        7,
-  enemyEffect:  'bleed',
-  image:        'images/spike'
+  image:        'images/spike.jpg'
 };
 var sporePod = {
   name:         'spore pod',
-  price:        6,
-  enemyEffect:  'pox',
-  image:        'images/spore-pod'
+  image:        'images/spore-pod.jpg'
 };
 var smallRoundShield = {
   name:         'small round shield',
-  price:        25,
-  playerEffect: 'boost defense',
   image:        'images/small-round-shield'
 };
 var knightsShield = {
   name:         'knight\'s shield',
-  price:        35,
-  playerEffect: 'boost defense 2',
   image:        'images/knights-shield'
 };
 var pitchfork = {
   name:         'pitchfork',
   power:        3,
-  playerEffect: 'boost counter',
   image:        'images/pitchfork.jpg'
 };
 var smithingHammer = {
   name:         'smithing hammer',
   power:        4,
-  enemyEffect:  'lower defense',
   image:        'images/smithing-hammer.jpeg'
 };
 var woodAxe = {
   name:         'wood axe',
   power:        5,
-  enemyEffect:  'bleed',
   image:        'images/wood-axe.jpg'
 };
 var handScythe = {
   name:         'hand scythe',
   power:        4,
-  enemyEffect:  'lower defense',
   image:        'images/hand-scythe.jpg' 
 };
-
+function useItem(index) {
+  if (phaseCounter === 1) {
+    if (player.itemsBelt[index].name === 'balm vial') {
+      heal(player);
+    } else if (player.itemsBelt[index].name === 'powdershell') {
+      newMessage(player.name + ' threw a powdershell at the ' + creature.name + '!');
+      burn(creature);
+    } else if (player.itemsBelt[index].name === 'spike') {
+      newMessage(player.name + ' threw a spike at the ' + creature.name + '!');
+      pierce(creature);
+    } else {
+      newMessage(player.name + ' tossed a spore pod at the ' + creature.name + '!');
+      poxChance(creature);
+    }
+  } else {
+    newMessage(player.name + ' can\'t use an item during this phase!');
+  }
+  player.itemsBelt.splice(index, 1);
+}
 ////////////////////////////////////////////////////
 //  FUNCTIONS TO CALCULATE ITEM & WEAPON EFFECTS  //
 ////////////////////////////////////////////////////
 
 function heal(target) {
   target.hp          = ( target.hp + 3) + Math.ceil(Math.random() * 2);
-  return target.hp;
+  newMessage(target.name + ' has healed and now has ' + target.hp + ' hit points.');
+  if (target.condition != 'none') {
+    newMessage(target.name + ' is no longer ' + target.condition + '.');
+    target.condition = 'none';
+  } else {
+    target.condition = target.condition;
+  }
+  playerHp.innerText = player.name + ' hit points: ' + player.hp;
 };
 
 function burn(target) {
@@ -331,9 +351,7 @@ function newEnemy() {
 //  GAME PHASES AND PHASE DEFINITIONS  //
 /////////////////////////////////////////
 
-var go            = document.getElementById('goBtn'),
-    promptBox     = document.getElementById('prompt-box');
-    useItem       = document.getElementById('item-box');
+var go = document.getElementById('goBtn');
 
 /////////////////////////////////////////
 //  CONDITIONAL THAT ALLOWS GO BUTTON  //
@@ -343,31 +361,65 @@ var go            = document.getElementById('goBtn'),
 go.onclick = function() {
   if (phaseCounter === 1) {
     useItemPhase();
+  } else if (phaseCounter === 2) {
+    creatureAttackPhase();
   } else {
-    combatPhase();
+    playerAttackPhase();
   }
 };
 
-/////////////////////////////////////////////
-//  MAIN GAME PHASE - THIS PHASE REPEATS   //
-//  AS MANY TIMES AS THE PLAYER CAN MAIN-  //
-//  TAIN BEFORE DYING                      //
-/////////////////////////////////////////////
+//////////////////////////////////////////////////////
+//  MAIN GAME PHASES - THESE PHASES REPEAT AS MANY  //
+//  TIMES AS THE PLAYER CAN MAINTAIN BEFORE DYING   //
+//////////////////////////////////////////////////////
 
 function useItemPhase() {
+  
+  itemBox[0].onclick = function() {
+    useItem(0);
+  }
+
+  itemBox[1].onclick = function() {
+    useItem(1);
+  }
+
+  itemBox[2].onclick = function() {
+    useItem(2);
+  }
+
+
+
+  if (player.itemsBelt.length > 0) {
+    newMessage('You can use an item before the battle begins.');
+  } else {
+    newMessage('The next battle awaits...');
+  }
+  conditionCheck(creature);
   phaseCounter = 2;
 };
 
-/////////////////////////////////
-//  CALCULATES DAMAGE BETWEEN  //
-//  PLAYER AND CURRENT ENEMY   //
-/////////////////////////////////
 
-function combatPhase() {
-  creatureAttackPhase();
-  playerAttackPhase();
-  phaseCounter = 1;
+
+///////////////////////////////////////////
+//  CHECKS ITEMS IN ITEMSBELT ARRAY AND  //
+//  UPDATES THE ITEM BELT GRAPHICS       //
+///////////////////////////////////////////
+
+var itemBox = document.getElementsByClassName('item-box');
+
+function itemsCheck() {
+  if (player.itemsBelt.length > 0) {
+    for (i = 0; i < player.itemsBelt.length; i++) {
+      itemBox[i].innerHTML = '<img src="' + player.itemsBelt[i].image + '">';
+    }
+  } else {
+    for (i = 0; i < player.itemsBelt.length; i++) {
+      itemBox[i].innerHTML = '<p>Empty</p>';
+    }
+  }
 };
+
+
 
 ///////////////////////////////////////////
 //  FIRST STEP OF THE MAIN COMBAT PHASE  //
@@ -383,6 +435,7 @@ function creatureAttackPhase() {
     phaseAtkPower = phaseAtkPower;
   }
   player.hp -= phaseAtkPower;
+  newMessage('The ' + creature.name + ' dealt ' + phaseAtkPower + ' damage to ' + player.name + '.');
   playerHp.innerText = player.name + ' hit points: ' + player.hp;
   playerDeathCheck();
   playerAfflictedCheck(creature);
@@ -395,6 +448,7 @@ function creatureAttackPhase() {
   conditionCheck(player);
   playerHp.innerText = player.name + ' hit points: ' + player.hp;
   playerDeathCheck();
+  phaseCounter = 3;
 };
 
 ////////////////////////////////////////////
@@ -413,8 +467,11 @@ function playerAttackPhase() {
     phaseAtkPower = phaseAtkPower;
   }
   creature.hp -= phaseAtkPower;
+  newMessage(player.name + ' dealt ' + phaseAtkPower + ' damage to the ' + creature.name + '.');
   enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
   creatureDeathCheck();
+  itemsCheck();
+  phaseCounter = 1;
 };
 
 ///////////////////////////////////
@@ -427,7 +484,7 @@ function playerDeathCheck() {
     player.hp = 0;
     playerHp.innerText = player.name + ' hit points: ' + player.hp;
     go.style.display = 'none';
-    promptBox.innerText = player.name + ' died. GAME OVER'
+    newMessage(player.name + ' died.  GAME OVER');
   } else {
     player.hp = player.hp;
   }
@@ -442,6 +499,7 @@ function creatureDeathCheck() {
   if (creature.hp < 0) {
     creature.hp = 0;
     enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
+    newMessage(player.name + ' has slain the ' + creature.name + '.');
     if (player.itemsBelt.length < 3) {
       itemDrop(creature);
     } else {
@@ -458,6 +516,8 @@ function creatureDeathCheck() {
 //  WITH A CONDITION AFTER FIGHTING ENEMY  //
 /////////////////////////////////////////////
 
+var statusCheck = document.getElementById('status-indicator');
+
 function playerAfflictedCheck(target) {
   if (target.name === 'Bog Rat') {
     poxChance(player);
@@ -468,11 +528,13 @@ function playerAfflictedCheck(target) {
   } else if (target.name === 'Cursed Militia') {
     var throwChance = Math.ceil(Math.random() * 4);
     if (throwChance > 3) {
+      newMessage('The Cursed Militia threw a powdershell at ' + player.name + '!');
       burn(player);
     }
   } else {
     player.condition = player.condition;
   }
+  statusCheck.innerHTML = '<p>Status: ' + target.condition + '</p>';
 };
 
 function solveForWeapon(target) {
@@ -493,10 +555,15 @@ function solveForWeapon(target) {
 function conditionCheck(target) {
   if (target.condition === 'burned') {
     target.hp -= 1;
+    newMessage(target.name + ' took 1 burn damage.');
   } else if (target.condition === 'poxed') {
-    target.hp -= Math.ceil(Math.random() * 2);
+    var dmg = Math.ceil(Math.random() * 2);
+    target.hp -= dmg;
+    newMessage(target.name + ' took ' + dmg + ' pox damage.');
   } else if (target.condition === 'bleeding') {
-    target.hp -= Math.ceil(Math.random() * 3);
+    var dmg = Math.ceil(Math.random() * 3);
+    target.hp -= dmg;
+    newMessage(target.name + ' took ' + dmg + ' bleed damage.');
   } else {
     target.hp = target.hp;
   }
@@ -512,9 +579,11 @@ function itemDrop(target) {
   if (dropChance > 1) {
     var dropped = Math.floor(Math.random() * target.items.length);
     player.itemsBelt.push(target.items[dropped]);
+    newMessage('The ' + target.name + ' dropped a ' + target.items[dropped].name + '.');
   } else {
     player.itemsBelt = player.itemsBelt;
   }
+  itemsCheck();
 };
 
 ///////////////////////////////
