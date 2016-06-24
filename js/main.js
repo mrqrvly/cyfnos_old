@@ -2,7 +2,6 @@
 //  --------------------  GLOBAL & SETUP STUFF  --------------------  //
 
 
-
 ////////////////////////
 //  GLOBAL VARIABLES  //
 ////////////////////////
@@ -191,11 +190,12 @@ function newEnemy() {
 
 //  --------------------  ACTUAL RUNTIME & GAME PHASES  --------------------  //
 
+
+
 /////////////////////////////////////////
 //  CONDITIONAL THAT ALLOWS GO BUTTON  //
 //  TO CYCLE THROUGH STAGES OF COMBAT  //
 /////////////////////////////////////////
-
 
 go.onclick = function() {
   if (phaseCounter === 1) {
@@ -206,6 +206,7 @@ go.onclick = function() {
     playerAttackPhase();
   }
 };
+
 
 
 /////////////////////////////////////
