@@ -591,9 +591,6 @@ img {
 button {
   float: right;
 }
-section:nth-child(2) .col-4:nth-child(3) p {
-  float: right;
-}
 section:nth-child(3) .col-4 {
   width: 350px;
   height: 350px;
@@ -604,6 +601,8 @@ section:nth-child(3) .col-4 {
 button {
   width: 158px;
   height: 158px;
+  border: 2px solid grey;
+  border-radius: 5px;
 }
 .col-2 {
   width: 158px;

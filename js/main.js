@@ -10,6 +10,12 @@ var modal         = document.getElementById('myModal'),
     weaponGraphic = document.getElementById('weapon-graphic'),
     playerHp      = document.getElementById('player-hp'),
     promptBox     = document.getElementById('prompt-box'),
+    slain         = document.getElementById('kills'),
+    statusCheck   = document.getElementById('status-indicator'),
+    enemyGraphic  = document.getElementById('enemy-graphic'),
+    enemyHp       = document.getElementById('enemy-hp'),
+    kills         = 0,
+    creature,
     playerName,
     phaseCounter,
     player;
@@ -43,25 +49,25 @@ span.onclick = function() {
 ///////////////////////////////////////
 
     if (document.getElementById('farmer').checked) {
-      var farmer              = new PlayerCharacter (playerName, 'Farmer', 18, 0, 1, 6, 6, pitchfork, [sporePod], 'none');
+      var farmer              = new PlayerCharacter (playerName, 'Farmer', 18, 5, 5, pitchfork, [sporePod], 'none');
       player                  = farmer;
       playerGraphic.innerHTML = '<img src="images/player-image.jpg">';
       playerHp.innerText      = player.name + ' hit points: ' + player.hp;
       weaponGraphic.innerHTML = '<img src="images/pitchfork.jpg">';
     } else if (document.getElementById('smith').checked) {
-      var smith               = new PlayerCharacter (playerName, 'Smith', 20, 0, 1, 8, 4, smithingHammer, [spike], 'none');
+      var smith               = new PlayerCharacter (playerName, 'Smith', 20, 7, 3, smithingHammer, [spike], 'none');
       player                  = smith;
       playerGraphic.innerHTML = '<img src="images/player-image.jpg">';
       playerHp.innerText      = player.name + ' hit points: ' + player.hp;
       weaponGraphic.innerHTML = '<img src="images/smithing-hammer.jpeg">';
     } else if (document.getElementById('builder').checked) {
-      var builder             = new PlayerCharacter (playerName, 'Builder', 19, 0, 1, 7, 6, woodAxe, [powderShell], 'none');
+      var builder             = new PlayerCharacter (playerName, 'Builder', 19, 6, 4, woodAxe, [powderShell], 'none');
       player                  = builder;
       playerGraphic.innerHTML = '<img src="images/player-image.jpg">';
       playerHp.innerText      = player.name + ' hit points: ' + player.hp;
       weaponGraphic.innerHTML = '<img src="images/wood-axe.jpg">';
     } else if (document.getElementById('fieldhand').checked) {
-      var fieldhand           = new PlayerCharacter (playerName, 'Fieldhand', 17, 0, 1, 5, 5, handScythe, [balmVial], 'none');
+      var fieldhand           = new PlayerCharacter (playerName, 'Fieldhand', 17, 5, 5, handScythe, [balmVial], 'none');
       player                  = fieldhand;
       playerGraphic.innerHTML = '<img src="images/player-image.jpg">';
       playerHp.innerText      = player.name + ' hit points: ' + player.hp;
@@ -87,9 +93,9 @@ span.onclick = function() {
 //  REPEATING OF MAIN GAME PHASES  //
 /////////////////////////////////////
 
-    newMessage('The adventure through Cyfnos Village begins...');
+    newMessage(player.name + '\'s travels through Cyfnos Village begins...');
 
-    phaseCounter = 1
+    phaseCounter = 1;
 
 };
 
@@ -107,16 +113,206 @@ window.onclick = function(event) {
 //  PROTOTYPE NEW PLAYER CHARACTER  //
 //////////////////////////////////////
 
-function PlayerCharacter (name, type, hp, xp, level, attack, defense, weapon, itemsBelt, condition) {
+function PlayerCharacter (name, type, hp, attack, defense, weapon, itemsBelt, condition) {
   this.name      = name;
   this.type      = type;
   this.hp        = hp;
   this.attack    = attack;
   this.defense   = defense;
-  this.level     = level;
   this.weapon    = weapon;
   this.itemsBelt = itemsBelt;
   this.condition = condition;
+};
+
+///////////////////////////////////////////
+//  PROTOTYPE MONSTER AND MONSTER TYPES  //
+///////////////////////////////////////////
+
+function enemyCreature (name, hp, attack, defense, items, condition) {
+  this.name      = name;
+  this.hp        = hp;
+  this.attack    = attack;
+  this.defense   = defense;
+  this.items     = items;
+  this.condition = condition;
+};
+
+
+
+/////////////////////////////////////////
+//  INSTALLS NEW ENEMY INTO PLAY AREA  //
+/////////////////////////////////////////
+
+
+function newEnemy() {
+  var enemyGen             = Math.ceil(Math.random() * 5)
+  if (enemyGen        === 1) {
+    var bogRat             = new enemyCreature ('Bog Rat', 5, 6, 2, [balmVial], 'none');
+    creature               = bogRat;
+    enemyGraphic.innerHTML = '<img src="images/bog-rat.jpg">';
+    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
+  } else if (enemyGen === 2) {
+    var basilisk           = new enemyCreature ('Basilisk', 7, 7, 2, [balmVial], 'none');
+    creature               = basilisk;
+    enemyGraphic.innerHTML = '<img src="images/basilisk.jpg">';
+    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
+  } else if (enemyGen === 3) {
+    var moorHound          = new enemyCreature ('Moor Hound', 10, 8, 5, [balmVial], 'none');
+    creature               = moorHound;
+    enemyGraphic.innerHTML = '<img src="images/moor-hound.png">';
+    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
+  } else if (enemyGen === 4) {
+    var darkNibilis        = new enemyCreature ('Dark Nibilis', 12, 9, 2, [balmVial, sporePod], 'none');
+    creature               = darkNibilis;
+    enemyGraphic.innerHTML = '<img src="images/dark-nibilis.jpg">';
+    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
+  } else {
+    var cursedMilitia      = new enemyCreature ('Cursed Militia', 20, 10, 5, [balmVial, spike, powderShell], 'none');
+    creature               = cursedMilitia;
+    enemyGraphic.innerHTML = '<img src="images/cursed-militia.jpg">';
+    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
+  }
+};
+
+
+/////////////////////////////////////////
+//  GAME PHASES AND PHASE DEFINITIONS  //
+/////////////////////////////////////////
+
+
+var go = document.getElementById('goBtn');
+
+
+/////////////////////////////////////////
+//  CONDITIONAL THAT ALLOWS GO BUTTON  //
+//  TO CYCLE THROUGH STAGES OF COMBAT  //
+/////////////////////////////////////////
+
+
+go.onclick = function() {
+  if (phaseCounter === 1) {
+    useItemPhase();
+  } else if (phaseCounter === 2) {
+    creatureAttackPhase();
+  } else {
+    playerAttackPhase();
+  }
+};
+
+
+//////////////////////////////////////////////////////
+//  MAIN GAME PHASES - THESE PHASES REPEAT AS MANY  //
+//  TIMES AS THE PLAYER CAN MAINTAIN BEFORE DYING   //
+//////////////////////////////////////////////////////
+
+
+function useItemPhase() {
+
+  itemBox[0].onclick = function() {
+    useItem(0);
+  };
+  itemBox[1].onclick = function() {
+    useItem(1);
+  };
+  itemBox[2].onclick = function() {
+    useItem(2);
+  };
+  if (player.itemsBelt.length > 0) {
+    newMessage('You can use an item before the battle begins.');
+  } else {
+    newMessage('The next battle awaits...');
+  }
+  conditionCheck(creature);
+  phaseCounter = 2;
+};
+
+
+function useItem(index) {
+  if (phaseCounter === 2) {
+    if (player.itemsBelt[index].name === 'balm vial') {
+      heal(player);
+    } else if (player.itemsBelt[index].name === 'powdershell') {
+      newMessage(player.name + ' threw a powdershell at the ' + creature.name + '!');
+      burn(creature);
+    } else if (player.itemsBelt[index].name === 'spike') {
+      newMessage(player.name + ' threw a spike at the ' + creature.name + '!');
+      pierce(creature);
+    } else {
+      newMessage(player.name + ' tossed a spore pod at the ' + creature.name + '!');
+      poxChance(creature);
+    }
+    player.itemsBelt.splice(index, 1);
+    itemBox[index].firstChild.remove();
+    for (var i = 0; i < 3; i++) {
+      itemBox[i].innerHTML = '<p>Empty</p>';
+    }
+    itemsCheck();
+    enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
+  } else {
+    newMessage(player.name + ' can\'t use an item during this phase!');
+  }
+  
+};
+
+
+///////////////////////////////////////////
+//  CHECKS ITEMS IN ITEMSBELT ARRAY AND  //
+//  UPDATES THE ITEM BELT GRAPHICS       //
+///////////////////////////////////////////
+
+var itemBox = document.getElementsByClassName('item-box');
+
+function itemsCheck() {
+  if (player.itemsBelt.length > 0) {
+    for (var i = 0; i < player.itemsBelt.length; i++) {
+      itemBox[i].innerHTML = '<img src="' + player.itemsBelt[i].image + '">';
+    }
+  } else {
+    for (var i = 0; i < 3; i++) {
+      itemBox[i].innerHTML = '<p>Empty</p>';
+    }
+  }
+};
+
+///////////////////////////////////
+//  CHECKS FOR PLAYER DEATH AND  //
+//  ENDS GAME IF PLAYER IS DEAD  //
+///////////////////////////////////
+
+
+function playerDeathCheck() {
+  if (player.hp < 0) {
+    player.hp = 0;
+    playerHp.innerText = player.name + ' hit points: ' + player.hp;
+    go.style.display = 'none';
+    newMessage(player.name + ' died.  GAME OVER');
+  } else {
+    player.hp = player.hp;
+  }
+};
+
+///////////////////////////////////
+//  CHECKS FOR ENEMY DEATH AND   //
+//  CALCULATES ITEM DROP IF ANY  //
+///////////////////////////////////
+
+
+function creatureDeathCheck() {
+  if (creature.hp < 0) {
+    creature.hp = 0;
+    enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
+    newMessage(player.name + ' has slain the ' + creature.name + '.');
+    kills += 1;
+    slain.innerText = 'Enemies slain: ' + kills;
+    if (player.itemsBelt.length < 3) {
+      itemDrop(creature);
+    } else {
+      player.itemsBelt = player.itemsBelt;
+    }
+    newEnemy();
+  } else {
+    creature.hp = creature.hp;
+  }
 };
 
 //////////////////////////////////////////
@@ -167,32 +363,70 @@ var handScythe = {
   power:        4,
   image:        'images/hand-scythe.jpg' 
 };
-function useItem(index) {
-  if (phaseCounter === 1) {
-    if (player.itemsBelt[index].name === 'balm vial') {
-      heal(player);
-    } else if (player.itemsBelt[index].name === 'powdershell') {
-      newMessage(player.name + ' threw a powdershell at the ' + creature.name + '!');
-      burn(creature);
-    } else if (player.itemsBelt[index].name === 'spike') {
-      newMessage(player.name + ' threw a spike at the ' + creature.name + '!');
-      pierce(creature);
-    } else {
-      newMessage(player.name + ' tossed a spore pod at the ' + creature.name + '!');
-      poxChance(creature);
-    }
+
+///////////////////////////////////////////
+//  FOLLOWS COMBAT PHASE - IF PLAYER     //
+//  HAS A STATUS CONDITION, THIS CHECK   //
+//  WILL DEAL APPROPRIATE DAMAGE BEFORE  //
+//  THE CURRENT PHASE COMES TO AN END    //
+///////////////////////////////////////////
+
+
+function conditionCheck(target) {
+  if (target.condition === 'burned') {
+    target.hp -= 1;
+    newMessage(target.name + ' took 1 burn damage.');
+  } else if (target.condition === 'poxed') {
+    var dmg = Math.ceil(Math.random() * 2);
+    target.hp -= dmg;
+    newMessage(target.name + ' took ' + dmg + ' pox damage.');
+  } else if (target.condition === 'bleeding') {
+    var dmg = Math.ceil(Math.random() * 3);
+    target.hp -= dmg;
+    newMessage(target.name + ' took ' + dmg + ' bleed damage.');
   } else {
-    newMessage(player.name + ' can\'t use an item during this phase!');
+    target.hp = target.hp;
   }
-  player.itemsBelt.splice(index, 1);
-}
+  if (target === player) {
+    playerHp.innerText = player.name + ' hit points: ' + player.hp;
+  } else { 
+    enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
+  }
+};
+
+//////////////////////////////////
+//  CALCULATES WHICH ITEM WILL  //
+//  BE DROPPED BY A DEAD ENEMY  //
+//////////////////////////////////
+
+function itemDrop(target) {
+  var dropChance = Math.ceil(Math.random() * 4);
+  if (dropChance > 1) {
+    var dropped = Math.floor(Math.random() * target.items.length);
+    player.itemsBelt.push(target.items[dropped]);
+    newMessage('The ' + target.name + ' dropped a ' + target.items[dropped].name + '.');
+  } else {
+    player.itemsBelt = player.itemsBelt;
+  }
+  itemsCheck();
+};
+
+
+
+
+
+
+
+
+
 ////////////////////////////////////////////////////
 //  FUNCTIONS TO CALCULATE ITEM & WEAPON EFFECTS  //
 ////////////////////////////////////////////////////
 
 function heal(target) {
-  target.hp          = ( target.hp + 3) + Math.ceil(Math.random() * 2);
-  newMessage(target.name + ' has healed and now has ' + target.hp + ' hit points.');
+  var health         = Math.ceil(Math.random() * 2);
+  target.hp          = ( target.hp + 3) + health;
+  newMessage(target.name + ' gained ' + (health + 3) + ' and now has ' + target.hp + ' hit points.');
   if (target.condition != 'none') {
     newMessage(target.name + ' is no longer ' + target.condition + '.');
     target.condition = 'none';
@@ -203,17 +437,22 @@ function heal(target) {
 };
 
 function burn(target) {
-  target.hp = (target.hp - 3) - Math.ceil(Math.random() * 3);
+  var dmg = Math.ceil(Math.random() * 3);
+  target.hp = (target.hp - 3) - dmg;
+  newMessage(target.name + ' took ' + (dmg + 3) + ' burn damage.');
+  if (target = player) {
+
+  } else {
+    enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
+  }
   burnChance(target);
-  return target.hp;
 };
 
 function burnChance(target) {
   var burning        = Math.ceil(Math.random() * 5);
   if (burning > 4) {
     target.condition = 'burned';
-    // console.log('Burning!');
-    return target.condition;
+    newMessage(target.name + ' is burning!');
   } else {
     target.condition = target.condition;
     return target.condition;
@@ -221,16 +460,17 @@ function burnChance(target) {
 };
 
 function pierce(target) {
-  target.hp          = (target.hp - 2) - Math.ceil(Math.random() * 2);
+  var dmg            = Math.ceil(Math.random() * 2);
+  target.hp          = (target.hp - 2) - dmg;
+  newMessage(target.name + ' took ' + (dmg + 2) + ' pierce damage.');
   bleedChance(target);
-  return target.hp;
 };
 
 function bleedChance(target) {
   var bleeding       = Math.ceil(Math.random() * 8);
   if (bleeding > 7) {
     target.condition = 'bleeding';
-    // console.log('Bleeding!');
+    newMessage(target.name + ' is bleeding!');
     return target.condition;
   } else {
     target.condition = target.condition;
@@ -239,10 +479,10 @@ function bleedChance(target) {
 };
 
 function poxChance(target) {
-  var poxing         = Math.ceil(Math.random() * 5);
-  if (poxing > 4) {
+  var poxing         = Math.ceil(Math.random() * 3);
+  if (poxing > 2) {
     target.condition = 'poxed';
-    // console.log('Contracted pox!');
+    newMessage(target.name + ' has contracted pox!');
     return target.condition
   } else {
     target.condition = target.condition;
@@ -275,15 +515,17 @@ function highCounterChance(target) {
   var counter        = Math.ceil(Math.random() * 3);
   if (counter > 1) {
     counterStrike(creature);
-    return playerName + ' delivered a counterstrike!';
   } else {
-    return playerName + ' did not counter.';
+    newMessage(playerName + ' did not counter.');
   }
 };
 
 function counterStrike(target) {
-  target.hp          = target.hp - (Math.ceil(Math.random() * 3));
-  return target.hp; 
+  var dmg = Math.ceil(Math.random() * 3);
+  target.hp          = target.hp - dmg;
+  newMessage(playerName + ' delivered a counterstrike for ' + dmg + '!');
+  creatureDeathCheck();
+  enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
 };
 
 function lowerDefense(target) {
@@ -292,134 +534,9 @@ function lowerDefense(target) {
     target.defense   = 0;
     return target.defense;
   } else {
-    return target.defense;
+    target.defense = target.defense;
   }
 };
-
-///////////////////////////////////////////
-//  PROTOTYPE MONSTER AND MONSTER TYPES  //
-///////////////////////////////////////////
-
-function enemyCreature (name, hp, attack, defense, items, condition) {
-  this.name      = name;
-  this.hp        = hp;
-  this.attack    = attack;
-  this.defense   = defense;
-  this.items     = items;
-  this.condition = condition;
-};
-
-var creature,
-    enemyGraphic = document.getElementById('enemy-graphic');
-    enemyHp      = document.getElementById('enemy-hp')
-
-/////////////////////////////////////////
-//  INSTALLS NEW ENEMY INTO PLAY AREA  //
-/////////////////////////////////////////
-
-function newEnemy() {
-  var enemyGen             = Math.ceil(Math.random() * 5)
-  if (enemyGen === 1) {
-    var bogRat             = new enemyCreature ('Bog Rat', 5, 4, 2, [balmVial], 'none');
-    creature               = bogRat;
-    enemyGraphic.innerHTML = '<img src="images/bog-rat.jpg">';
-    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
-  } else if (enemyGen === 2) {
-    var basilisk           = new enemyCreature ('Basilisk', 7, 6, 2, [balmVial], 'none');
-    creature               = basilisk;
-    enemyGraphic.innerHTML = '<img src="images/basilisk.jpg">';
-    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
-  } else if (enemyGen === 3) {
-    var moorHound          = new enemyCreature ('Moor Hound', 10, 8, 6, [balmVial], 'none');
-    creature               = moorHound;
-    enemyGraphic.innerHTML = '<img src="images/moor-hound.png">';
-    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
-  } else if (enemyGen === 4) {
-    var darkNibilis        = new enemyCreature ('Dark Nibilis', 12, 10, 2, [balmVial, sporePod], 'none');
-    creature               = darkNibilis;
-    enemyGraphic.innerHTML = '<img src="images/dark-nibilis.jpg">';
-    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
-  } else {
-    var cursedMilitia      = new enemyCreature ('Cursed Militia', 20, 12, 7, [balmVial, spike, powderShell], 'none');
-    creature               = cursedMilitia;
-    enemyGraphic.innerHTML = '<img src="images/cursed-militia.jpg">';
-    enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
-  }
-};
-
-/////////////////////////////////////////
-//  GAME PHASES AND PHASE DEFINITIONS  //
-/////////////////////////////////////////
-
-var go = document.getElementById('goBtn');
-
-/////////////////////////////////////////
-//  CONDITIONAL THAT ALLOWS GO BUTTON  //
-//  TO CYCLE THROUGH STAGES OF COMBAT  //
-/////////////////////////////////////////
-
-go.onclick = function() {
-  if (phaseCounter === 1) {
-    useItemPhase();
-  } else if (phaseCounter === 2) {
-    creatureAttackPhase();
-  } else {
-    playerAttackPhase();
-  }
-};
-
-//////////////////////////////////////////////////////
-//  MAIN GAME PHASES - THESE PHASES REPEAT AS MANY  //
-//  TIMES AS THE PLAYER CAN MAINTAIN BEFORE DYING   //
-//////////////////////////////////////////////////////
-
-function useItemPhase() {
-  
-  itemBox[0].onclick = function() {
-    useItem(0);
-  }
-
-  itemBox[1].onclick = function() {
-    useItem(1);
-  }
-
-  itemBox[2].onclick = function() {
-    useItem(2);
-  }
-
-
-
-  if (player.itemsBelt.length > 0) {
-    newMessage('You can use an item before the battle begins.');
-  } else {
-    newMessage('The next battle awaits...');
-  }
-  conditionCheck(creature);
-  phaseCounter = 2;
-};
-
-
-
-///////////////////////////////////////////
-//  CHECKS ITEMS IN ITEMSBELT ARRAY AND  //
-//  UPDATES THE ITEM BELT GRAPHICS       //
-///////////////////////////////////////////
-
-var itemBox = document.getElementsByClassName('item-box');
-
-function itemsCheck() {
-  if (player.itemsBelt.length > 0) {
-    for (i = 0; i < player.itemsBelt.length; i++) {
-      itemBox[i].innerHTML = '<img src="' + player.itemsBelt[i].image + '">';
-    }
-  } else {
-    for (i = 0; i < player.itemsBelt.length; i++) {
-      itemBox[i].innerHTML = '<p>Empty</p>';
-    }
-  }
-};
-
-
 
 ///////////////////////////////////////////
 //  FIRST STEP OF THE MAIN COMBAT PHASE  //
@@ -427,12 +544,11 @@ function itemsCheck() {
 ///////////////////////////////////////////
 
 function creatureAttackPhase() {
-  var phaseDefBoost  = Math.ceil(Math.random() * 2);
+  phaseCounter = 2
+  var phaseDefBoost  = Math.floor(Math.random() * 3);
   var phaseAtkPower  = creature.attack - player.defense - phaseDefBoost;
   if (phaseAtkPower < 0) {
     phaseAtkPower    = 0;
-  } else {
-    phaseAtkPower = phaseAtkPower;
   }
   player.hp -= phaseAtkPower;
   newMessage('The ' + creature.name + ' dealt ' + phaseAtkPower + ' damage to ' + player.name + '.');
@@ -445,7 +561,7 @@ function creatureAttackPhase() {
     normalCounterChance(player);
   }
   creatureDeathCheck();
-  conditionCheck(player);
+  conditionCheck(creature);
   playerHp.innerText = player.name + ' hit points: ' + player.hp;
   playerDeathCheck();
   phaseCounter = 3;
@@ -459,7 +575,11 @@ function creatureAttackPhase() {
 ////////////////////////////////////////////
 
 function playerAttackPhase() {
-  solveForWeapon(player);
+  if (player.weapon === handScythe || player.weapon === smithingHammer) {
+    lowerDefense(creature);
+  } else {
+    creature.defense = creature.defense;
+  }
   var phaseAtkPower = (player.attack + player.weapon.power) - creature.defense;
   if (phaseAtkPower < 0) {
     phaseAtkPower = 0;
@@ -470,45 +590,9 @@ function playerAttackPhase() {
   newMessage(player.name + ' dealt ' + phaseAtkPower + ' damage to the ' + creature.name + '.');
   enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
   creatureDeathCheck();
+  conditionCheck(player);
   itemsCheck();
   phaseCounter = 1;
-};
-
-///////////////////////////////////
-//  CHECKS FOR PLAYER DEATH AND  //
-//  ENDS GAME IF PLAYER IS DEAD  //
-///////////////////////////////////
-
-function playerDeathCheck() {
-  if (player.hp < 0) {
-    player.hp = 0;
-    playerHp.innerText = player.name + ' hit points: ' + player.hp;
-    go.style.display = 'none';
-    newMessage(player.name + ' died.  GAME OVER');
-  } else {
-    player.hp = player.hp;
-  }
-};
-
-///////////////////////////////////
-//  CHECKS FOR ENEMY DEATH AND   //
-//  CALCULATES ITEM DROP IF ANY  //
-///////////////////////////////////
-
-function creatureDeathCheck() {
-  if (creature.hp < 0) {
-    creature.hp = 0;
-    enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
-    newMessage(player.name + ' has slain the ' + creature.name + '.');
-    if (player.itemsBelt.length < 3) {
-      itemDrop(creature);
-    } else {
-      player.itemsBelt = player.itemsBelt;
-    }
-    newEnemy();
-  } else {
-    creature.hp = creature.hp;
-  }
 };
 
 /////////////////////////////////////////////
@@ -516,15 +600,13 @@ function creatureDeathCheck() {
 //  WITH A CONDITION AFTER FIGHTING ENEMY  //
 /////////////////////////////////////////////
 
-var statusCheck = document.getElementById('status-indicator');
-
 function playerAfflictedCheck(target) {
   if (target.name === 'Bog Rat') {
     poxChance(player);
   } else if (target.name === 'Basilisk') {
     poxChance(player);
   } else if (target.name === 'Moor Hound') {
-    pierce(player);
+    bleedChance(player);
   } else if (target.name === 'Cursed Militia') {
     var throwChance = Math.ceil(Math.random() * 4);
     if (throwChance > 3) {
@@ -534,72 +616,4 @@ function playerAfflictedCheck(target) {
   } else {
     player.condition = player.condition;
   }
-  statusCheck.innerHTML = '<p>Status: ' + target.condition + '</p>';
 };
-
-function solveForWeapon(target) {
-  if (target.weapon === handScythe || target.weapon === smithingHammer) {
-    lowerDefense(creature);
-  } else {
-    target.defense = target.defense;
-  }
-};
-
-///////////////////////////////////////////
-//  FOLLOWS COMBAT PHASE - IF PLAYER     //
-//  HAS A STATUS CONDITION, THIS CHECK   //
-//  WILL DEAL APPROPRIATE DAMAGE BEFORE  //
-//  THE CURRENT PHASE COMES TO AN END    //
-///////////////////////////////////////////
-
-function conditionCheck(target) {
-  if (target.condition === 'burned') {
-    target.hp -= 1;
-    newMessage(target.name + ' took 1 burn damage.');
-  } else if (target.condition === 'poxed') {
-    var dmg = Math.ceil(Math.random() * 2);
-    target.hp -= dmg;
-    newMessage(target.name + ' took ' + dmg + ' pox damage.');
-  } else if (target.condition === 'bleeding') {
-    var dmg = Math.ceil(Math.random() * 3);
-    target.hp -= dmg;
-    newMessage(target.name + ' took ' + dmg + ' bleed damage.');
-  } else {
-    target.hp = target.hp;
-  }
-};
-
-//////////////////////////////////
-//  CALCULATES WHICH ITEM WILL  //
-//  BE DROPPED BY A DEAD ENEMY  //
-//////////////////////////////////
-
-function itemDrop(target) {
-  var dropChance = Math.ceil(Math.random() * 2);
-  if (dropChance > 1) {
-    var dropped = Math.floor(Math.random() * target.items.length);
-    player.itemsBelt.push(target.items[dropped]);
-    newMessage('The ' + target.name + ' dropped a ' + target.items[dropped].name + '.');
-  } else {
-    player.itemsBelt = player.itemsBelt;
-  }
-  itemsCheck();
-};
-
-///////////////////////////////
-//  T E S T I N G   A R E A  //
-// ! ! R A D I A T I O N ! ! //
-///////////////////////////////
-
-// var farmer = new PlayerCharacter (playerName, 'Farmer', 18, 0, 1, 6, 6, [pitchfork], [sporePod], 'none');
-// player = farmer;
-// playerName = 'Marque';
-// console.log(heal(player));
-// console.log(burn(player));
-// console.log(pierce(player));
-// console.log(poxChance(player));
-// console.log(normalDefenseBoost(player));
-// console.log(highDefenseBoost(player));
-// console.log(normalCounterChance(player));
-// console.log(highCounterChance(player));
-// console.log(lowerDefense(player));
