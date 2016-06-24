@@ -1,24 +1,35 @@
 
-//////////////////////////////////////
-//  MODAL SETUP - ALLOWS PLAYER TO  //
-//  INPUT NAME AND SELECT CLASS     //
-//////////////////////////////////////
+//  --------------------  GLOBAL & SETUP STUFF  --------------------  //
+
+
+
+////////////////////////
+//  GLOBAL VARIABLES  //
+////////////////////////
 
 var modal         = document.getElementById('myModal'),
     span          = document.getElementsByClassName('begin')[0],
     playerGraphic = document.getElementById('player-graphic'),
     weaponGraphic = document.getElementById('weapon-graphic'),
     playerHp      = document.getElementById('player-hp'),
-    promptBox     = document.getElementById('prompt-box'),
     slain         = document.getElementById('kills'),
-    statusCheck   = document.getElementById('status-indicator'),
+    promptBox     = document.getElementById('prompt-box'),
+    // statusCheck   = document.getElementById('status-indicator'),
     enemyGraphic  = document.getElementById('enemy-graphic'),
     enemyHp       = document.getElementById('enemy-hp'),
+    go            = document.getElementById('goBtn'),
     kills         = 0,
     creature,
     playerName,
     phaseCounter,
     player;
+
+
+
+/////////////////////////////
+//  PRINTS RUNNING UPDATE  //
+//  ON CURRENT GAME STATE  //
+/////////////////////////////
 
 function newMessage(message) {
   var alertPlayer = document.createElement('p');
@@ -26,22 +37,61 @@ function newMessage(message) {
   promptBox.insertBefore(alertPlayer, promptBox.firstChild);
 };
 
-//////////////////////////////////////
-//  DISPLAYS MODAL ON BUTTON CLICK  //
-//////////////////////////////////////
+
+
+////////////////////////////////////
+//  DISPLAYS MODAL FOR CHARACTER  //
+//  SELECTION ON BUTTON CLICK &   //
+//  CLOSES MODAL ON WINDOW CLICK  //
+////////////////////////////////////
 
 document.getElementById('myBtn').onclick = function() {
     modal.style.display = 'block';
 };
 
+window.onclick = function(event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    };
+};
+
+
+
+//  --------------------  CHARACTER CREATION & PROTOTYPES  --------------------  //
+
+
+
+/////////////////////////////////////////////
+//  HIDES CHARACTER SELECTION OPTIONS AND  //
+//  SELECTS DEFAULTS IF NO INPUT IS GIVEN  //
+/////////////////////////////////////////////
+
 span.onclick = function() {
     modal.style.display = 'none';
     document.getElementById('myBtn').style.display = 'none';
-
     playerName = document.getElementById('character-name').value;
     if (playerName.length === 0) {
       playerName = 'Player';  
     };
+
+
+
+//////////////////////////////////////
+//  PROTOTYPE NEW PLAYER CHARACTER  //
+//////////////////////////////////////
+
+function PlayerCharacter (name, type, hp, attack, defense, weapon, itemsBelt, condition) {
+  this.name      = name;
+  this.type      = type;
+  this.hp        = hp;
+  this.attack    = attack;
+  this.defense   = defense;
+  this.weapon    = weapon;
+  this.itemsBelt = itemsBelt;
+  this.condition = condition;
+};
+
+
 
 ///////////////////////////////////////
 //  INSTALLS CHARACTER GRAPHIC AND   //
@@ -80,49 +130,12 @@ span.onclick = function() {
     }
 
     itemsCheck();
-
-////////////////////////////////////
-//  GENERATE FIRST ENEMY TO BE    //
-//  FACED IN THE MAIN GAME PHASE  //
-////////////////////////////////////
-
     newEnemy();
-
-/////////////////////////////////////
-//  PREPARE GAME ENVIRONMENT FOR   //
-//  REPEATING OF MAIN GAME PHASES  //
-/////////////////////////////////////
-
     newMessage(player.name + '\'s travels through Cyfnos Village begins...');
-
     phaseCounter = 1;
-
 };
 
-///////////////////////////////////////////
-//  CLICK OUTSIDE THE MODAL TO CLOSE IT  //
-///////////////////////////////////////////
 
-window.onclick = function(event) {
-    if (event.target === modal) {
-        modal.style.display = 'none';
-    };
-};
-
-//////////////////////////////////////
-//  PROTOTYPE NEW PLAYER CHARACTER  //
-//////////////////////////////////////
-
-function PlayerCharacter (name, type, hp, attack, defense, weapon, itemsBelt, condition) {
-  this.name      = name;
-  this.type      = type;
-  this.hp        = hp;
-  this.attack    = attack;
-  this.defense   = defense;
-  this.weapon    = weapon;
-  this.itemsBelt = itemsBelt;
-  this.condition = condition;
-};
 
 ///////////////////////////////////////////
 //  PROTOTYPE MONSTER AND MONSTER TYPES  //
@@ -157,7 +170,7 @@ function newEnemy() {
     enemyGraphic.innerHTML = '<img src="images/basilisk.jpg">';
     enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
   } else if (enemyGen === 3) {
-    var moorHound          = new enemyCreature ('Moor Hound', 10, 8, 5, [balmVial], 'none');
+    var moorHound          = new enemyCreature ('Moor Hound', 10, 8, 4, [balmVial], 'none');
     creature               = moorHound;
     enemyGraphic.innerHTML = '<img src="images/moor-hound.png">';
     enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
@@ -167,7 +180,7 @@ function newEnemy() {
     enemyGraphic.innerHTML = '<img src="images/dark-nibilis.jpg">';
     enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
   } else {
-    var cursedMilitia      = new enemyCreature ('Cursed Militia', 20, 10, 5, [balmVial, spike, powderShell], 'none');
+    var cursedMilitia      = new enemyCreature ('Cursed Militia', 15, 10, 4, [balmVial, spike, powderShell], 'none');
     creature               = cursedMilitia;
     enemyGraphic.innerHTML = '<img src="images/cursed-militia.jpg">';
     enemyHp.innerText      = creature.name + ' hit points: ' + creature.hp; 
@@ -175,13 +188,8 @@ function newEnemy() {
 };
 
 
-/////////////////////////////////////////
-//  GAME PHASES AND PHASE DEFINITIONS  //
-/////////////////////////////////////////
 
-
-var go = document.getElementById('goBtn');
-
+//  --------------------  ACTUAL RUNTIME & GAME PHASES  --------------------  //
 
 /////////////////////////////////////////
 //  CONDITIONAL THAT ALLOWS GO BUTTON  //
@@ -200,10 +208,10 @@ go.onclick = function() {
 };
 
 
-//////////////////////////////////////////////////////
-//  MAIN GAME PHASES - THESE PHASES REPEAT AS MANY  //
-//  TIMES AS THE PLAYER CAN MAINTAIN BEFORE DYING   //
-//////////////////////////////////////////////////////
+/////////////////////////////////////
+//  PHASE 1 - PLAYER CAN CHOOSE    //
+//  TO USE ITEMS IN THE TOOL BELT  //
+/////////////////////////////////////
 
 
 function useItemPhase() {
@@ -227,17 +235,23 @@ function useItemPhase() {
 };
 
 
+
+//////////////////////////////////////
+//  MAKES ITEM EFFECTS TRIGGER AND  //
+//  MANAGES GRAPHICS IN ITEM BELT   //
+//////////////////////////////////////
+
 function useItem(index) {
   if (phaseCounter === 2) {
     if (player.itemsBelt[index].name === 'balm vial') {
       heal(player);
-    } else if (player.itemsBelt[index].name === 'powdershell') {
+    } else if (player.itemsBelt[index].name === 'powder shell') {
       newMessage(player.name + ' threw a powdershell at the ' + creature.name + '!');
       burn(creature);
     } else if (player.itemsBelt[index].name === 'spike') {
       newMessage(player.name + ' threw a spike at the ' + creature.name + '!');
       pierce(creature);
-    } else {
+    } else if (player.itemsBelt[index].name === 'spore pod') {
       newMessage(player.name + ' tossed a spore pod at the ' + creature.name + '!');
       poxChance(creature);
     }
@@ -273,6 +287,10 @@ function itemsCheck() {
     }
   }
 };
+
+
+
+//  --------------------  COMBAT AND OTHER OUTCOME DETERMINATES  --------------------  //
 
 ///////////////////////////////////
 //  CHECKS FOR PLAYER DEATH AND  //
@@ -419,9 +437,10 @@ function itemDrop(target) {
 
 
 
-////////////////////////////////////////////////////
-//  FUNCTIONS TO CALCULATE ITEM & WEAPON EFFECTS  //
-////////////////////////////////////////////////////
+//////////////////////////////////////
+//  FUNCTIONS TO CALCULATE EFFECTS  //
+//  OF ITEMS, WEAPONS, & CREATURES  //
+//////////////////////////////////////
 
 function heal(target) {
   var health         = Math.ceil(Math.random() * 2);
@@ -440,9 +459,9 @@ function burn(target) {
   var dmg = Math.ceil(Math.random() * 3);
   target.hp = (target.hp - 3) - dmg;
   newMessage(target.name + ' took ' + (dmg + 3) + ' burn damage.');
-  if (target = player) {
-
-  } else {
+  if (target === player) {
+    playerHp.innerText = player.name + ' hit points: ' + player.hp;
+  } else if (target === creature) {
     enemyHp.innerText = creature.name + ' hit points: ' + creature.hp;
   }
   burnChance(target);
@@ -538,6 +557,8 @@ function lowerDefense(target) {
   }
 };
 
+
+
 ///////////////////////////////////////////
 //  FIRST STEP OF THE MAIN COMBAT PHASE  //
 //  CALCULATES DAMAGE DONE TO PLAYER     //
@@ -567,6 +588,8 @@ function creatureAttackPhase() {
   phaseCounter = 3;
 };
 
+
+
 ////////////////////////////////////////////
 //  SECOND STEP OF THE MAIN COMBAT PHASE  //
 //  CALCULATES DAMAGE DONE TO CURRENT     //
@@ -594,6 +617,8 @@ function playerAttackPhase() {
   itemsCheck();
   phaseCounter = 1;
 };
+
+
 
 /////////////////////////////////////////////
 //  CHECKS TO SEE IF PLAYER IS AFFLICTED   //
